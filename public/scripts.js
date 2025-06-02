@@ -18,14 +18,6 @@ document.getElementById("user-message").addEventListener("input", () => {
   socket.emit("typing", username);
 });
 
-socket.on("chatHistory", history => {
-  history.forEach(({ user, text }) => {
-    const li = document.createElement("li");
-    li.innerHTML = `<strong>${user}</strong>: ${text}`;
-    messages.appendChild(li);
-  });
-  messages.scrollTop = messages.scrollHeight;
-});
 
 socket.on("mssgtoclients", ({ user, text }) => {
   const li = document.createElement("li");

@@ -17,7 +17,6 @@ io.on('connection', socket => {
 
   socket.on("join", username => {
     users[socket.id] = username;
-    socket.emit("chatHistory", messageHistory);
     socket.broadcast.emit("mssgtoclients", { user: "System", text: `${username} joined the chat.` });
   });
 
