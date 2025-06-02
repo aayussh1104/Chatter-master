@@ -6,4 +6,7 @@ Uses Socket.io and Javascript to host live chat-room at localhost
 - git clone https://github.com/freecat99/Chatter.git
 - cd Chatter
 - npm install
-- nodemon server.js 
+- nodemon server.js
+
+## I have deployed this project using https://railway.com/
+- The link to my project is => https://chatter-master.up.railway.app/
