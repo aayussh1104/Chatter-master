@@ -29,7 +29,7 @@ io.on('connection', socket => {
   });
 
   socket.on("mssgfromclient", msg => {
-    const username = users[socket.id] || "Unknown";
+    const username = users[socket.id];
 
     const messageData = {
       user: username,  // Capture actual name when message is sent
