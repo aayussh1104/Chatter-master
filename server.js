@@ -16,12 +16,14 @@ io.on('connection', socket => {
   console.log(`${socket.id} connected`);
 
   socket.on("join", username => {
-    users[socket.id] = username;
-    socket.broadcast.emit("mssgtoclients", {
-      user: "System",
-      text: `${username} joined the chat.`
-    });
+  users[socket.id] = username;
+  socket.emit("joined"); 
+  socket.broadcast.emit("mssgtoclients", {
+    user: "System",
+    text: `${username} joined the chat.`
   });
+});
+
 
   socket.on("mssgfromclient", msg => {
     const messageData = { user: users[socket.id], text: msg };
