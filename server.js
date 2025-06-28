@@ -10,7 +10,6 @@ const io = require('socket.io')(http, {
 app.use(express.static('public'));
 
 const users = {};
-let messageHistory = [];
 
 io.on('connection', socket => {
   console.log(`${socket.id} connected`);
@@ -22,18 +21,19 @@ io.on('connection', socket => {
 
   socket.on("mssgfromclient", msg => {
     const messageData = { user: users[socket.id], text: msg };
-    messageHistory.push(messageData);
     io.emit("mssgtoclients", messageData);
   });
 
   socket.on("typing", user => {
-    socket.broadcast.emit("typing", user);
+    socket.broadcast.emit("typing", user); // Empty string clears typing
   });
 
   socket.on("disconnect", () => {
     const user = users[socket.id];
     delete users[socket.id];
-    io.emit("mssgtoclients", { user: "System", text: `${user} left the chat.` });
+    if (user) {
+      io.emit("mssgtoclients", { user: "System", text: `${user} left the chat.` });
+    }
   });
 });
 

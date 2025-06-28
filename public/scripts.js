@@ -22,10 +22,10 @@ document.getElementById("message-form").addEventListener("submit", e => {
 
 let typingTimeout;
 inputField.addEventListener("input", () => {
-  socket.emit("typing", username);
+  socket.emit("typing", username); // Tell others I'm typing
   clearTimeout(typingTimeout);
   typingTimeout = setTimeout(() => {
-    socket.emit("typing", null);
+    socket.emit("typing", ""); // Clear it after 1s
   }, 1000);
 });
 
@@ -41,15 +41,14 @@ socket.on("mssgtoclients", ({ user, text }) => {
   li.classList.add(user === username ? "user" : "bot");
 
   messages.appendChild(li);
-  messages.scrollTo({ top: messages.scrollHeight, behavior: "smooth" });
+  messages.scrollTop = messages.scrollHeight; // Always scroll to bottom
 });
 
 socket.on("typing", user => {
   typingDisplay.textContent = user ? `${user} is typing...` : "";
 });
 
-
-
+// Dark mode toggle
 const toggleButton = document.getElementById('toggle-dark-mode');
 toggleButton.addEventListener('click', () => {
   document.body.classList.toggle('dark');
