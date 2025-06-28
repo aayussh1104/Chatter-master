@@ -2,55 +2,42 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
-  cors: { origin: "*" }
+  cors: {
+    origin: "*"
+  }
 });
 
 app.use(express.static('public'));
 
 const users = {};
+let messageHistory = [];
 
-io.on('connection', socket => {
-  console.log(`${socket.id} connected`);
+  io.on('connection', socket => {
+    console.log(`${socket.id} connected`);
+  });
+
 
   socket.on("join", username => {
     users[socket.id] = username;
-
-    // Notify others only
-    socket.broadcast.emit("mssgtoclients", {
-      user: "System",
-      text: `${username} joined the chat.`
-    });
+    socket.broadcast.emit("mssgtoclients", { user: "System", text: `${username} joined the chat. `});
   });
 
   socket.on("mssgfromclient", msg => {
-    const username = users[socket.id] || "Unknown";
-
-    const messageData = {
-      user: username,
-      text: msg
-    };
-
+    const messageData = { user: users[socket.id], text: msg };
+    messageHistory.push(messageData);
     io.emit("mssgtoclients", messageData);
   });
 
-  socket.on("typing", () => {
-    const username = users[socket.id];
-    if (username) {
-      socket.broadcast.emit("typing", username);
-    }
+  socket.on("typing", user => {
+    socket.broadcast.emit("typing", user);
   });
 
   socket.on("disconnect", () => {
-    const username = users[socket.id];
-    if (username) {
-      io.emit("mssgtoclients", {
-        user: "System",
-        text: `${username} left the chat.`
-      });
-    }
+    const user = users[socket.id];
     delete users[socket.id];
+    io.emit("mssgtoclients", { user: "System", text: `${user} left the chat.` });
   });
-});
+
 
 http.listen(4000, () => {
   console.log("Server running on http://localhost:4000");
