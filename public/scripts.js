@@ -1,61 +1,33 @@
 const socket = io();
-let username = "";
-
-while (!username.trim()) {
-  username = prompt("Enter your name:");
-}
-username = username.trim().slice(0, 30);
+const username = prompt("Enter your name:");
 socket.emit("join", username);
 
 const messages = document.getElementById("messages");
 const typingDisplay = document.getElementById("typing");
-const inputField = document.getElementById("user-message");
 
 document.getElementById("message-form").addEventListener("submit", e => {
   e.preventDefault();
-  const msg = inputField.value.trim();
+  const msg = document.getElementById("user-message").value.trim();
   if (msg) {
     socket.emit("mssgfromclient", msg);
-    inputField.value = "";
+    document.getElementById("user-message").value = "";
   }
 });
 
-let typingTimeout;
-inputField.addEventListener("input", () => {
-  socket.emit("typing", { user: username }); // send real user
-  clearTimeout(typingTimeout);
-  typingTimeout = setTimeout(() => {
-    socket.emit("typing", { user: null }); // clear it later
-  }, 1000);
-});
-
-socket.on("typing", ({ user }) => {
-  typingDisplay.textContent = user ? `${user} is typing...` : "";
+document.getElementById("user-message").addEventListener("input", () => {
+  socket.emit("typing", username);
 });
 
 
 socket.on("mssgtoclients", ({ user, text }) => {
   const li = document.createElement("li");
-
-  const now = new Date();
-  const hours = now.getHours().toString().padStart(2, '0');
-  const minutes = now.getMinutes().toString().padStart(2, '0');
-  const time = `${hours}:${minutes}`;
-
-  li.textContent = `${user} [${time}]: ${text}`;
-  li.classList.add(user === username ? "user" : "bot");
-
+  li.innerHTML = <strong>${user}</strong>: ${text};
   messages.appendChild(li);
-  messages.scrollTop = messages.scrollHeight; // Always scroll to bottom
+  messages.scrollTop = messages.scrollHeight;
 });
 
 socket.on("typing", user => {
-  typingDisplay.textContent = user ? `${user} is typing...` : "";
-});
-
-// Dark mode toggle
-const toggleButton = document.getElementById('toggle-dark-mode');
-toggleButton.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  toggleButton.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  typingDisplay.textContent = ${user} is typing...;
+  clearTimeout(window.typingTimeout);
+  window.typingTimeout = setTimeout(() => typingDisplay.textContent = "", 1000);
 });
