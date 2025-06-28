@@ -13,11 +13,14 @@ const users = {};
 let messageHistory = [];
 
 io.on('connection', socket => {
-  console.log(${socket.id} connected);
+  console.log(`${socket.id} connected`);
 
   socket.on("join", username => {
     users[socket.id] = username;
-    socket.broadcast.emit("mssgtoclients", { user: "System", text: ${username} joined the chat. });
+    socket.broadcast.emit("mssgtoclients", {
+      user: "System",
+      text: `${username} joined the chat.`
+    });
   });
 
   socket.on("mssgfromclient", msg => {
@@ -33,7 +36,12 @@ io.on('connection', socket => {
   socket.on("disconnect", () => {
     const user = users[socket.id];
     delete users[socket.id];
-    io.emit("mssgtoclients", { user: "System", text: ${user} left the chat. });
+    if (user) {
+      io.emit("mssgtoclients", {
+        user: "System",
+        text: `${user} left the chat.`
+      });
+    }
   });
 });
 
