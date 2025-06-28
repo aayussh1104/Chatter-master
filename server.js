@@ -2,15 +2,12 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
-  cors: {
-    origin: "*"
-  }
+  cors: { origin: "*" }
 });
 
 app.use(express.static('public'));
 
 const users = {};
-let messageHistory = [];
 
 io.on('connection', socket => {
   console.log(`${socket.id} connected`);
@@ -18,10 +15,7 @@ io.on('connection', socket => {
   socket.on("join", username => {
     users[socket.id] = username;
 
-    // Send chat history to the newly joined user
-    socket.emit("loadHistory", messageHistory);
-
-    // Notify others
+    // Notify others only
     socket.broadcast.emit("mssgtoclients", {
       user: "System",
       text: `${username} joined the chat.`
@@ -29,14 +23,13 @@ io.on('connection', socket => {
   });
 
   socket.on("mssgfromclient", msg => {
-    const username = users[socket.id];
+    const username = users[socket.id] || "Unknown";
 
     const messageData = {
-      user: username,  // Capture actual name when message is sent
+      user: username,
       text: msg
     };
 
-    messageHistory.push(messageData);
     io.emit("mssgtoclients", messageData);
   });
 

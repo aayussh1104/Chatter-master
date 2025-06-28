@@ -19,6 +19,7 @@ document.getElementById("user-message").addEventListener("input", () => {
   socket.emit("typing");
 });
 
+// Live messages only
 socket.on("mssgtoclients", ({ user, text }) => {
   const li = document.createElement("li");
   li.innerHTML = `<strong>${user}</strong>: ${text}`;
@@ -26,19 +27,11 @@ socket.on("mssgtoclients", ({ user, text }) => {
   messages.scrollTop = messages.scrollHeight;
 });
 
+// Typing indicator
 socket.on("typing", user => {
   typingDisplay.textContent = `${user} is typing...`;
   clearTimeout(window.typingTimeout);
   window.typingTimeout = setTimeout(() => {
     typingDisplay.textContent = "";
   }, 1000);
-});
-
-socket.on("loadHistory", history => {
-  history.forEach(({ user, text }) => {
-    const li = document.createElement("li");
-    li.innerHTML = `<strong>${user}</strong>: ${text}`;
-    messages.appendChild(li);
-  });
-  messages.scrollTop = messages.scrollHeight;
 });
