@@ -15,43 +15,47 @@ let messageHistory = [];
 io.on('connection', socket => {
   console.log(`${socket.id} connected`);
 
-  // Save username when joining
   socket.on("join", username => {
     users[socket.id] = username;
+
+    // Send chat history to the newly joined user
+    socket.emit("loadHistory", messageHistory);
+
+    // Notify others
     socket.broadcast.emit("mssgtoclients", {
       user: "System",
       text: `${username} joined the chat.`
     });
   });
 
-  // Handle new messages
   socket.on("mssgfromclient", msg => {
+    const username = users[socket.id] || "Unknown";
+
     const messageData = {
-      user: users[socket.id] || "Unknown",
+      user: username,  // Capture actual name when message is sent
       text: msg
     };
+
     messageHistory.push(messageData);
     io.emit("mssgtoclients", messageData);
   });
 
-  // Typing notification
   socket.on("typing", () => {
-    const user = users[socket.id];
-    if (user) {
-      socket.broadcast.emit("typing", user);
+    const username = users[socket.id];
+    if (username) {
+      socket.broadcast.emit("typing", username);
     }
   });
 
-  // Handle disconnect
   socket.on("disconnect", () => {
-    const user = users[socket.id];
-    delete users[socket.id];
-    if (user) {
+    const username = users[socket.id];
+    if (username) {
       io.emit("mssgtoclients", {
         user: "System",
-        text: `${user} left the chat.`
+        text: `${username} left the chat.`
       });
     }
+    delete users[socket.id];
   });
 });
 

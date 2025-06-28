@@ -1,5 +1,5 @@
 const socket = io();
-const username = prompt("Enter your name:");
+const username = prompt("Enter your name:") || "Guest";
 socket.emit("join", username);
 
 const messages = document.getElementById("messages");
@@ -16,7 +16,7 @@ document.getElementById("message-form").addEventListener("submit", e => {
 });
 
 document.getElementById("user-message").addEventListener("input", () => {
-  socket.emit("typing"); // ✅ FIXED HERE
+  socket.emit("typing");
 });
 
 socket.on("mssgtoclients", ({ user, text }) => {
@@ -27,9 +27,18 @@ socket.on("mssgtoclients", ({ user, text }) => {
 });
 
 socket.on("typing", user => {
-  typingDisplay.textContent = user ? `${user} is typing...` : "";
+  typingDisplay.textContent = `${user} is typing...`;
   clearTimeout(window.typingTimeout);
   window.typingTimeout = setTimeout(() => {
     typingDisplay.textContent = "";
   }, 1000);
+});
+
+socket.on("loadHistory", history => {
+  history.forEach(({ user, text }) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${user}</strong>: ${text}`;
+    messages.appendChild(li);
+  });
+  messages.scrollTop = messages.scrollHeight;
 });
