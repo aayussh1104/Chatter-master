@@ -31,14 +31,12 @@ body {
   display: flex;
   flex-direction: column;
   transition: background 0.3s, color 0.3s;
-  overflow: hidden;
 }
 
 .chat-container {
   background: var(--chat-bg);
   flex: 1;
   width: 100%;
-  height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
   padding: 1rem;
@@ -86,7 +84,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  height: calc(100vh - 200px); /* Adjust for header + input */
   scroll-behavior: smooth;
 }
 
@@ -114,15 +111,10 @@ form {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
   padding: 10px;
   background: var(--chat-bg);
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
-  z-index: 10;
   flex-shrink: 0;
 }
 
@@ -163,14 +155,13 @@ form button:hover {
   font-size: 0.85rem;
   font-style: italic;
   margin-top: 5px;
-  color: gray;
   height: 20px;
+  color: gray;
 }
 
 #messages::-webkit-scrollbar {
   width: 6px;
 }
-
 #messages::-webkit-scrollbar-thumb {
   background: #aaa;
   border-radius: 3px;
@@ -184,10 +175,6 @@ form button:hover {
 @media (max-width: 600px) {
   .chat-container {
     padding: 0.5rem;
-  }
-
-  #messages {
-    height: calc(100vh - 250px); /* extra height for mobile keyboard/input */
   }
 
   form {

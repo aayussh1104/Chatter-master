@@ -22,12 +22,17 @@ document.getElementById("message-form").addEventListener("submit", e => {
 
 let typingTimeout;
 inputField.addEventListener("input", () => {
-  socket.emit("typing", username); // Tell others I'm typing
+  socket.emit("typing", { user: username }); // send real user
   clearTimeout(typingTimeout);
   typingTimeout = setTimeout(() => {
-    socket.emit("typing", ""); // Clear it after 1s
+    socket.emit("typing", { user: null }); // clear it later
   }, 1000);
 });
+
+socket.on("typing", ({ user }) => {
+  typingDisplay.textContent = user ? `${user} is typing...` : "";
+});
+
 
 socket.on("mssgtoclients", ({ user, text }) => {
   const li = document.createElement("li");

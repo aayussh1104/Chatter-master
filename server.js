@@ -24,9 +24,10 @@ io.on('connection', socket => {
     io.emit("mssgtoclients", messageData);
   });
 
-  socket.on("typing", user => {
-    socket.broadcast.emit("typing", user); // Empty string clears typing
-  });
+  socket.on("typing", ({ user }) => {
+  socket.broadcast.emit("typing", { user });
+});
+
 
   socket.on("disconnect", () => {
     const user = users[socket.id];
