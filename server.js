@@ -12,9 +12,9 @@ app.use(express.static('public'));
 const users = {};
 let messageHistory = [];
 
-  io.on('connection', socket => {
-    console.log(`${socket.id} connected`);
-  });
+io.on('connection', socket => {
+  console.log(`${socket.id} connected`);
+
 
 
   socket.on("join", username => {
@@ -37,6 +37,7 @@ let messageHistory = [];
     delete users[socket.id];
     io.emit("mssgtoclients", { user: "System", text: `${user} left the chat.` });
   });
+});
 
 
 http.listen(4000, () => {
