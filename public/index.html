@@ -3,19 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <title>Chatter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="shortcut icon" href="./resources/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="./resources/favicon.ico" type="image/x-icon" />
 </head>
 <body>
-    <div class="chat-container">
-        <div class="logo"></div>
+  <div class="chat-container">
+    <div class="header">
+      <div class="logo"></div>
+      <button id="toggle-dark-mode" title="Toggle Dark Mode">🌙</button>
+    </div>
+
     <ul id="messages"></ul>
     <p id="typing"></p>
   </div>
+
   <form id="message-form">
-      <input type="text" id="user-message" placeholder="Type your message..." autocomplete="off" />
-      <button type="submit">Send</button>
-    </form>
+    <input type="text" id="user-message" placeholder="Type your message..." autocomplete="off" />
+    <button type="submit">Send</button>
+  </form>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="scripts.js"></script>

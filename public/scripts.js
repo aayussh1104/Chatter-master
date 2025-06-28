@@ -1,33 +1,57 @@
 const socket = io();
-const username = prompt("Enter your name:");
+let username = "";
+
+while (!username.trim()) {
+  username = prompt("Enter your name:");
+}
+username = username.trim().slice(0, 30);
 socket.emit("join", username);
 
 const messages = document.getElementById("messages");
 const typingDisplay = document.getElementById("typing");
+const inputField = document.getElementById("user-message");
 
 document.getElementById("message-form").addEventListener("submit", e => {
   e.preventDefault();
-  const msg = document.getElementById("user-message").value.trim();
+  const msg = inputField.value.trim();
   if (msg) {
     socket.emit("mssgfromclient", msg);
-    document.getElementById("user-message").value = "";
+    inputField.value = "";
   }
 });
 
-document.getElementById("user-message").addEventListener("input", () => {
+let typingTimeout;
+inputField.addEventListener("input", () => {
   socket.emit("typing", username);
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => {
+    socket.emit("typing", null);
+  }, 1000);
 });
-
 
 socket.on("mssgtoclients", ({ user, text }) => {
   const li = document.createElement("li");
-  li.innerHTML = `<strong>${user}</strong>: ${text}`;
+
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, '0');
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+  const time = `${hours}:${minutes}`;
+
+  li.textContent = `${user} [${time}]: ${text}`;
+  li.classList.add(user === username ? "user" : "bot");
+
   messages.appendChild(li);
-  messages.scrollTop = messages.scrollHeight;
+  messages.scrollTo({ top: messages.scrollHeight, behavior: "smooth" });
 });
 
 socket.on("typing", user => {
-  typingDisplay.textContent = `${user} is typing...`;
-  clearTimeout(window.typingTimeout);
-  window.typingTimeout = setTimeout(() => typingDisplay.textContent = "", 1000);
+  typingDisplay.textContent = user ? `${user} is typing...` : "";
+});
+
+
+
+const toggleButton = document.getElementById('toggle-dark-mode');
+toggleButton.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  toggleButton.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
 });
