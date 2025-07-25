@@ -8,5 +8,3 @@ Uses Socket.io and Javascript to host live chat-room at localhost
 - npm install
 - nodemon server.js
 
-## I have deployed this project using https://railway.com/
-- The link to my project is => https://chatter-master.up.railway.app/
